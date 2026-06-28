@@ -1,0 +1,133 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+    
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-danger: var(--danger);
+    --color-danger-foreground: var(--danger-foreground);
+    
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: #F8FAFC;
+    --foreground: #0B1220;
+    --card: #FFFFFF;
+    --card-foreground: #0B1220;
+    --popover: #FFFFFF;
+    --popover-foreground: #0B1220;
+    --primary: #2563EB;
+    --primary-foreground: #FFFFFF;
+    --accent: #06B6D4;
+    --accent-foreground: #FFFFFF;
+    --success: #10B981;
+    --success-foreground: #FFFFFF;
+    --warning: #F59E0B;
+    --warning-foreground: #FFFFFF;
+    --danger: #EF4444;
+    --danger-foreground: #FFFFFF;
+    
+    --secondary: #E2E8F0;
+    --secondary-foreground: #0F172A;
+    --muted: #F1F5F9;
+    --muted-foreground: #64748B;
+    --border: #E2E8F0;
+    --input: #E2E8F0;
+    --ring: #2563EB;
+    
+    --radius: 0.75rem;
+}
+
+.dark {
+    --background: #000000;
+    --foreground: #F8FAFC;
+    --card: rgba(255,255,255,0.05);
+    --card-foreground: #F8FAFC;
+    --popover: #0f172a;
+    --popover-foreground: #F8FAFC;
+    --primary: #2563EB;
+    --primary-foreground: #FFFFFF;
+    --accent: #06B6D4;
+    --accent-foreground: #FFFFFF;
+    --success: #10B981;
+    --success-foreground: #FFFFFF;
+    --warning: #F59E0B;
+    --warning-foreground: #FFFFFF;
+    --danger: #EF4444;
+    --danger-foreground: #FFFFFF;
+    
+    --secondary: rgba(255,255,255,0.1);
+    --secondary-foreground: #F8FAFC;
+    --muted: rgba(255,255,255,0.05);
+    --muted-foreground: #94A3B8;
+    --border: rgba(255,255,255,0.1);
+    --input: rgba(255,255,255,0.1);
+    --ring: #2563EB;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    overflow-x: hidden;
+  }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
