@@ -144,9 +144,6 @@ Return the result strictly as a JSON object with the following schema:
         config: {
           responseMimeType: "application/json",
           tools: [{ googleSearch: {} }],
-          thinkingConfig: {
-            thinkingLevel: "HIGH",
-          },
         },
       });
 

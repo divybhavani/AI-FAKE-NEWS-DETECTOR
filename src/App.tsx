@@ -44,77 +44,7 @@ const itemVariants = {
 };
 
 // --- CUSTOM CURSOR ---
-function CustomCursor() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
-
-  React.useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (
-        target.tagName.toLowerCase() === 'button' ||
-        target.tagName.toLowerCase() === 'a' ||
-        target.closest('button') ||
-        target.closest('a') ||
-        target.classList.contains('cursor-pointer') ||
-        getComputedStyle(target).cursor === 'pointer'
-      ) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
-      }
-    };
-
-    window.addEventListener('mousemove', updateMousePosition);
-    window.addEventListener('mouseover', handleMouseOver);
-
-    return () => {
-      window.removeEventListener('mousemove', updateMousePosition);
-      window.removeEventListener('mouseover', handleMouseOver);
-    };
-  }, []);
-
-  return (
-    <>
-      <svg className="hidden">
-        <defs>
-          <filter id="cursor-liquid" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="turbulence" />
-            <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise" />
-            <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="30" xChannelSelector="R" yChannelSelector="B" result="displaced" />
-            <feGaussianBlur in="displaced" stdDeviation="2" result="finalBlur" />
-            <feComposite in="finalBlur" in2="finalBlur" operator="over" />
-          </filter>
-        </defs>
-      </svg>
-      <motion.div
-        className="fixed top-0 left-0 w-2 h-2 bg-white rounded-full pointer-events-none z-[100] hidden md:block mix-blend-difference"
-        animate={{
-          x: mousePosition.x - 4,
-          y: mousePosition.y - 4,
-          scale: isHovering ? 0 : 1,
-          opacity: isHovering ? 0 : 1,
-        }}
-        transition={{ type: "tween", ease: "backOut", duration: 0.15 }}
-      />
-      <motion.div
-        className="fixed top-0 left-0 w-12 h-12 rounded-full pointer-events-none z-[99] hidden md:block mix-blend-difference shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.09),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.85),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.6),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.6),inset_0_0_6px_6px_rgba(255,255,255,0.12),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_12px_rgba(0,0,0,0.15)] bg-white/5"
-        style={{ backdropFilter: 'url("#cursor-liquid") blur(4px)' }}
-        animate={{
-          x: mousePosition.x - 24,
-          y: mousePosition.y - 24,
-          scale: isHovering ? 1.5 : 1,
-          opacity: 1,
-        }}
-        transition={{ type: "spring", stiffness: 80, damping: 25, mass: 1 }}
-      />
-    </>
-  );
-}
+// CustomCursor component removed
 
 export default function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'analyzer' | 'results' | 'dashboard'>('landing');
@@ -122,9 +52,7 @@ export default function App() {
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 relative overflow-hidden md:cursor-none">
-      <CustomCursor />
-      
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <FloatingPaths position={1} />
         <FloatingPaths position={-1} />
@@ -175,8 +103,9 @@ export default function App() {
 // --- NAVBAR ---
 function Navbar({ setView, currentView }: { setView: (v: any) => void, currentView: string }) {
   return (
-    <nav className="sticky top-0 z-50 w-full glass border-b border-white/5">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full relative overflow-hidden bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] border-b border-white/10 before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-b before:from-white/10 before:to-transparent">
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent sm:hidden" />
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between relative z-10">
         <div 
           className="flex items-center space-x-3 cursor-pointer group relative"
           onClick={() => setView('landing')}
@@ -278,16 +207,23 @@ function LandingView({ onStart }: { onStart: () => void, key?: React.Key }) {
           { icon: <ShieldCheck className="text-success w-6 h-6"/>, title: "Enterprise Security", desc: "Bank-grade privacy. Your data is analyzed and immediately discarded." }
         ].map((feature, i) => (
           <motion.div key={i} variants={itemVariants} whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-            <Card className="glass border-white/5 bg-white/5 h-full relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <CardHeader>
-                <div className="bg-white/5 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
+            <Card className="relative overflow-hidden group rounded-3xl border border-white/20 bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] before:absolute before:inset-0 before:-z-10 before:rounded-3xl before:p-[1px] before:bg-gradient-to-b before:from-white/20 before:to-transparent">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 opacity-50 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* Mobile specific liquid glass highlights */}
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent sm:hidden" />
+              <div className="absolute left-0 inset-y-0 w-px bg-gradient-to-b from-white/30 to-transparent sm:hidden" />
+
+              <CardHeader className="relative z-10">
+                <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-105 transition-transform duration-500 overflow-hidden shadow-[inset_0_1px_1px_rgba(255,255,255,0.4),0_8px_16px_rgba(0,0,0,0.2)] bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-xl border border-white/20">
+                   <div className="absolute inset-0 bg-white/20 mix-blend-overlay" />
+                   <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-white/50 to-transparent opacity-50 rotate-45" />
+                   {React.cloneElement(feature.icon as React.ReactElement, { className: 'w-7 h-7 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)] relative z-10' })}
                 </div>
-                <CardTitle className="text-lg">{feature.title}</CardTitle>
+                <CardTitle className="text-xl font-semibold tracking-tight">{feature.title}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm leading-relaxed">{feature.desc}</p>
+              <CardContent className="relative z-10">
+                <p className="text-white/70 text-sm leading-relaxed">{feature.desc}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -334,7 +270,16 @@ function AnalyzerView({ onAnalyze, isAnalyzing, setIsAnalyzing }: { onAnalyze: (
         }
         throw new Error(errorMessage);
       }
-      const data = await res.json();
+      
+      const responseText = await res.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error("Failed to parse success response:", responseText.substring(0, 200));
+        throw new Error("Server returned an invalid response format. The API might be down or misconfigured.");
+      }
+      
       onAnalyze(data);
     } catch (err: any) {
       console.error(err);
@@ -349,12 +294,17 @@ function AnalyzerView({ onAnalyze, isAnalyzing, setIsAnalyzing }: { onAnalyze: (
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="max-w-3xl mx-auto mt-12"
+      className="max-w-3xl mx-auto mt-12 px-4 sm:px-0"
     >
-      <Card className="glass border-white/10 shadow-2xl overflow-hidden rounded-3xl">
-        <div className="p-8 border-b border-white/5">
-          <h2 className="text-3xl font-bold tracking-tight mb-2">New Analysis</h2>
-          <p className="text-muted-foreground">Select an input method to begin verification.</p>
+      <Card className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] before:absolute before:inset-0 before:-z-10 before:rounded-3xl before:p-[1px] before:bg-gradient-to-b before:from-white/20 before:to-transparent">
+        
+        {/* Mobile specific liquid glass highlights */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent sm:hidden" />
+        <div className="absolute left-0 inset-y-0 w-px bg-gradient-to-b from-white/30 to-transparent sm:hidden" />
+
+        <div className="p-6 md:p-8 border-b border-white/10 relative z-10 bg-white/[0.01]">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">New Analysis</h2>
+          <p className="text-white/70">Select an input method to begin verification.</p>
         </div>
         
         <div className="w-full">
@@ -539,8 +489,11 @@ function ResultsView({ result, onNew }: { result: AnalysisResult, onNew: () => v
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div className="lg:col-span-3 space-y-6">
-          <Card className="glass border-white/10 rounded-3xl overflow-hidden">
-            <CardHeader className="border-b border-white/5 bg-white/5 pb-8">
+          <Card className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] before:absolute before:inset-0 before:-z-10 before:rounded-3xl before:p-[1px] before:bg-gradient-to-b before:from-white/20 before:to-transparent">
+            {/* Mobile specific liquid glass highlights */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent sm:hidden" />
+            <div className="absolute left-0 inset-y-0 w-px bg-gradient-to-b from-white/30 to-transparent sm:hidden" />
+            <CardHeader className="border-b border-white/10 bg-white/5 pb-8 relative z-10">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                 <div>
                   <CardDescription className="mb-2 font-mono uppercase tracking-wider text-xs">Final Verdict</CardDescription>
@@ -566,8 +519,10 @@ function ResultsView({ result, onNew }: { result: AnalysisResult, onNew: () => v
             </CardContent>
           </Card>
 
-          <Card className="glass border-white/10 rounded-3xl">
-            <CardHeader>
+          <Card className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] before:absolute before:inset-0 before:-z-10 before:rounded-3xl before:p-[1px] before:bg-gradient-to-b before:from-white/20 before:to-transparent">
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent sm:hidden" />
+            <div className="absolute left-0 inset-y-0 w-px bg-gradient-to-b from-white/30 to-transparent sm:hidden" />
+            <CardHeader className="relative z-10">
               <CardTitle className="flex items-center"><ShieldCheck className="w-5 h-5 mr-2 text-primary"/> Evidence & Fact-Checks</CardTitle>
             </CardHeader>
             <CardContent>
@@ -588,8 +543,10 @@ function ResultsView({ result, onNew }: { result: AnalysisResult, onNew: () => v
         </div>
 
         <div className="lg:col-span-2 space-y-6">
-          <Card className="glass border-white/10 rounded-3xl">
-            <CardHeader>
+          <Card className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] before:absolute before:inset-0 before:-z-10 before:rounded-3xl before:p-[1px] before:bg-gradient-to-b before:from-white/20 before:to-transparent">
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent sm:hidden" />
+            <div className="absolute left-0 inset-y-0 w-px bg-gradient-to-b from-white/30 to-transparent sm:hidden" />
+            <CardHeader className="relative z-10">
               <CardTitle>Trust Score</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center justify-center py-6">
@@ -609,8 +566,10 @@ function ResultsView({ result, onNew }: { result: AnalysisResult, onNew: () => v
             </CardContent>
           </Card>
 
-          <Card className="glass border-white/10 rounded-3xl">
-            <CardHeader>
+          <Card className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] before:absolute before:inset-0 before:-z-10 before:rounded-3xl before:p-[1px] before:bg-gradient-to-b before:from-white/20 before:to-transparent">
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent sm:hidden" />
+            <div className="absolute left-0 inset-y-0 w-px bg-gradient-to-b from-white/30 to-transparent sm:hidden" />
+            <CardHeader className="relative z-10">
               <CardTitle className="text-sm uppercase tracking-wider text-muted-foreground">Sources Consulted</CardTitle>
             </CardHeader>
             <CardContent>
@@ -632,7 +591,7 @@ function ResultsView({ result, onNew }: { result: AnalysisResult, onNew: () => v
           </Card>
 
           <Card 
-            className={`glass border-white/10 rounded-3xl mt-6 border-red-500/20 bg-red-500/5 transition-colors ${hasReported ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-500/10 cursor-pointer'}`} 
+            className={`relative overflow-hidden rounded-3xl border border-red-500/30 bg-red-500/[0.02] bg-gradient-to-b from-red-500/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(239,68,68,0.15)] before:absolute before:inset-0 before:-z-10 before:rounded-3xl before:p-[1px] before:bg-gradient-to-b before:from-red-500/20 before:to-transparent mt-6 transition-colors ${hasReported ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-500/10 cursor-pointer'}`} 
             onClick={async () => {
               if (hasReported || isReporting) return;
               setIsReporting(true);
@@ -759,8 +718,10 @@ function DashboardView() {
           { title: "AI Generated", val: stats.ai.toString(), color: "text-accent" },
         ].map((stat, i) => (
           <motion.div key={i} whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
-            <Card className="glass border-white/10 rounded-2xl bg-white/5 h-full">
-              <CardHeader className="pb-2">
+            <Card className="relative overflow-hidden rounded-2xl border border-white/20 bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:p-[1px] before:bg-gradient-to-b before:from-white/20 before:to-transparent h-full">
+              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent sm:hidden" />
+              <div className="absolute left-0 inset-y-0 w-px bg-gradient-to-b from-white/30 to-transparent sm:hidden" />
+              <CardHeader className="pb-2 relative z-10">
                 <CardDescription>{stat.title}</CardDescription>
               </CardHeader>
               <CardContent>
@@ -773,8 +734,10 @@ function DashboardView() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <motion.div variants={itemVariants} className="lg:col-span-2">
-          <Card className="glass border-white/10 rounded-3xl bg-white/5 h-full">
-            <CardHeader>
+          <Card className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] before:absolute before:inset-0 before:-z-10 before:rounded-3xl before:p-[1px] before:bg-gradient-to-b before:from-white/20 before:to-transparent h-full">
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent sm:hidden" />
+            <div className="absolute left-0 inset-y-0 w-px bg-gradient-to-b from-white/30 to-transparent sm:hidden" />
+            <CardHeader className="relative z-10">
               <CardTitle>Activity Overview</CardTitle>
               <CardDescription>Analysis volume over the past 7 days</CardDescription>
             </CardHeader>
@@ -809,8 +772,10 @@ function DashboardView() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card className="glass border-white/10 rounded-3xl bg-white/5 h-full">
-            <CardHeader>
+          <Card className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/[0.02] bg-gradient-to-b from-white/[0.08] to-transparent backdrop-blur-[24px] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] before:absolute before:inset-0 before:-z-10 before:rounded-3xl before:p-[1px] before:bg-gradient-to-b before:from-white/20 before:to-transparent h-full">
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent sm:hidden" />
+            <div className="absolute left-0 inset-y-0 w-px bg-gradient-to-b from-white/30 to-transparent sm:hidden" />
+            <CardHeader className="relative z-10">
               <CardTitle>Content Distribution</CardTitle>
               <CardDescription>Breakdown by verdict category</CardDescription>
             </CardHeader>
